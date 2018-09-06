@@ -68,7 +68,7 @@ module load tensorflow/intel-1.9.0-py36
   
 Run code:  
 ```bash
-srun python3 train_demo.py hparams/cnn.yaml demo_multi_node
+srun python3 train_horovod.py hparams/cnn.yaml demo_multi_node
 ```
 Note that we need to use `srun` here to launch as many workers as there are nodes available.  
 
