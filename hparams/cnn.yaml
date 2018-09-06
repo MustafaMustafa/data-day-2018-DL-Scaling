@@ -1,0 +1,54 @@
+default: &DEFAULT
+
+  data_format: 'channels_last'
+  input_shape: [None, 64, 64, 1]
+
+  conv_filters: [16, 32, 64]
+  conv_args:
+    kernel_size: 3
+    strides: 1
+    padding: 'same'
+    activation: 'relu'
+
+  maxpool_args:
+    pool_size: 2
+    strides: 2
+
+  conv_dropout_rate: 0.2
+  fc_hidden_units: [256]
+  fc_dropout_rates: [0.2]
+  fc_activation: 'relu'
+
+  learning_rate: 0.001
+  batchsize: 128
+  epochs: 100
+
+  train_dataset_size: 412416
+  train_data_files: 'data/train.h5'
+
+  valid_dataset_size: 137471
+  valid_data_files: 'data/valid.h5'
+
+  experiment_dir: 'logs/default_dont_use'
+
+baseline:
+  <<: *DEFAULT
+  experiment_dir: 'logs/baseline'
+
+demo_single_node:
+  <<: *DEFAULT
+  train_dataset_size: 128000
+  valid_dataset_size: 64000
+  train_data_files: '/global/cscratch1/sd/sfarrell/atlas-rpv-images/train.h5'
+  valid_data_files: '/global/cscratch1/sd/sfarrell/atlas-rpv-images/val.h5'
+  epochs: 5
+  experiment_dir: 'logs/demo_1_node'
+
+demo_multi_node:
+  <<: *DEFAULT
+  train_dataset_size: 128000
+  valid_dataset_size: 64000
+  train_data_files: '/global/cscratch1/sd/sfarrell/atlas-rpv-images/train.h5'
+  valid_data_files: '/global/cscratch1/sd/sfarrell/atlas-rpv-images/val.h5'
+  epochs: 5
+  experiment_dir: 'logs/demo'
