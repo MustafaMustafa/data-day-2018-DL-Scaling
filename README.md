@@ -57,7 +57,7 @@ This branch will add `train_horovod.py`. That is all you need to run in a distri
 8. **Multiple nodes training**:
 Let us first try training on 2 nodes. Start by allocating the nodes:
 ```bash
-salloc --qos interactive --nodes 2 --time 00:30:00 -C knl --reservation scaleday
+salloc --qos interactive --nodes 2 --time 01:00:00 -C knl --reservation scaleday
 ```
   
 Load TensorFlow module:  
