@@ -14,7 +14,7 @@ ssh -A [USER NAME]@cori.nersc.gov
 
 2. **Clone this repo**:  
 ```bash
-ssh clone https://github.com/MustafaMustafa/data-day-2018-DL-Scaling.git
+git clone https://github.com/MustafaMustafa/data-day-2018-DL-Scaling.git
 cd data-day-2018-DL-Scaling
 git fetch
 ```
