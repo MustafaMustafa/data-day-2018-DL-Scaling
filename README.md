@@ -14,27 +14,26 @@ ssh -A [USER NAME]@cori.nersc.gov
 
 2. **Clone this repo**:  
 ```bash
-ssh clone https://github.com/MustafaMustafa/data-day-2018-DL-Scaling.git
+git clone https://github.com/MustafaMustafa/data-day-2018-DL-Scaling.git
 cd data-day-2018-DL-Scaling
-git fetch
 ```
 
 3. **CNN model**:  
 ```bash
-git checkout -b origin/stage_1
+git checkout -b stage_1 origin/stage_1
 ```
 Browse the model class `./models/cnn_model.py`. Then checkout the YAML configuration file (`./hparams/cnn.yaml`) for how to setup an experiment parameters.  
 
 4. **Training using Estimator API**:  
 ```bash
-git checkout -b origin/stage_2
+git checkout -b stage_2 origin/stage_2
 ```
 In this branch you will see a few utility files in addition to `train_demo.py`. Now we can test the code on one node.
 
 5. **Single node training**:  
 Allocate a batch node:
 ```bash
-salloc --qos interactive --nodes 1 --time 00:30:00 -C knl --reservation scaleday
+salloc --nodes 1 --time 00:30:00 -C knl --reservation scaleday
 ```
   
 Load TensorFlow module:  
@@ -51,14 +50,14 @@ Now you can open and execute `./notebooks/plot-all-learning-curves.ipynb` in NER
 
 7. **Distributed training using Horovod**:
 ```bash
-git checkout -b origin/stage_3
+git checkout -b stage_3 origin/stage_3
 ```
 This branch will add `train_horovod.py`. That is all you need to run in a distributed mode.  
 
 8. **Multiple nodes training**:
 Let us first try training on 2 nodes. Start by allocating the nodes:
 ```bash
-salloc --qos interactive --nodes 2 --time 00:30:00 -C knl --reservation scaleday
+salloc --nodes 2 --time 01:00:00 -C knl --reservation scaleday
 ```
   
 Load TensorFlow module:  
