@@ -53,7 +53,7 @@ def main(argv):
 
     session_config = config_device('KNL')
     config = tf.estimator.RunConfig(session_config=session_config,
-                                    save_checkpoints_secs=200) # TOO FREQUENT, JUST FOR DEMO, use defaults instead
+                                    save_checkpoints_secs=200 if rank0 else None) # TOO FREQUENT, JUST FOR DEMO, use defaults instead
     estimator = tf.estimator.Estimator(model_fn=model_fn,
                                        model_dir=model_dir,
                                        config=config,
