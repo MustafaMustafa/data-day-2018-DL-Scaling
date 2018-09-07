@@ -1,10 +1,6 @@
 ### Scaling Deep Learning on Cori: Hands-on Activities
 Welcome to [NERSC Data Day 2018](https://www.nersc.gov/users/training/data-day/data-day-2018/) hands-on session!  
 
-This repo has multiple stacked branches to walk you through the code. The first
-two stages will get you to run a single node test. In the 3rd stage we will train on multiple
-nodes using [Horovod](https://github.com/uber/horovod).  
-
 #### Instructions
 1. **Login into Cori:**  
 Ask us for a training login account if you don't have a your own NERSC account (not available for remote participants).  
@@ -43,7 +39,7 @@ python3 train_demo.py hparams/cnn.yaml demo_single_node
 Now you can open and execute `./notebooks/plot-all-learning-curves.ipynb` in NERSC [Jupyter portal](http://jupyter-dev.nersc.gov).  
 
 7. **Distributed training using Horovod**:
-Take a look at `train_horovod.py` for how to use Horovod for synchronous batch parallelism. That is all you need to run in a distributed mode.  
+Take a look at `train_horovod.py` for how to use [Horovod](https://github.com/uber/horovod) for synchronous batch parallelism. That is all you need to run in a distributed mode.  
 
 8. **Multiple nodes training**:
 Let us first try training on 2 nodes. Start by allocating the nodes:
