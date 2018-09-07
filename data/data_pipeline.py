@@ -20,7 +20,7 @@ def get_input_fn(filename, dataset_size, batchsize, epochs, variable_scope,
         data input function input_fn
         """
 
-    with h5py.File(filename, mode='r') as _f:
+    with h5py.File(filename, mode='r', driver='core') as _f:
         data_group = _f['all_events']
         features = np.expand_dims(data_group['hist'][:dataset_size], axis=-1).astype(np.float32)
         labels = np.expand_dims(data_group['y'][:dataset_size], axis=-1).astype(np.float32)
@@ -45,8 +45,8 @@ def get_input_fn(filename, dataset_size, batchsize, epochs, variable_scope,
                                                           labels_placeholder))
             dataset = dataset.shuffle(shuffle_buffer_size)
             dataset = dataset.repeat(epochs)
-            dataset = dataset.prefetch(1)
-            dataset = dataset.batch(batchsize)
+            dataset = dataset.apply(tf.contrib.data.batch_and_drop_remainder(batchsize))
+            dataset = dataset.prefetch(4)
 
             data_it = dataset.make_initializable_iterator()
             iterator_initializer_hook.iterator_initializer_func = \
