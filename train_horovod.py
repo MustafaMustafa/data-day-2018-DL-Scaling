@@ -88,9 +88,10 @@ def main(argv):
                         hooks=[train_init_hook, bcast_hook],
                         max_steps=(epoch+1)*steps_per_epoch)
 
-        estimator.evaluate(input_fn=valid_input_fn,
-                           steps=params.valid_dataset_size//params.batchsize,
-                           hooks=[valid_init_hook])
+        if rank0:
+            estimator.evaluate(input_fn=valid_input_fn,
+                               steps=params.valid_dataset_size//params.batchsize,
+                               hooks=[valid_init_hook])
 
 if __name__ == '__main__':
     tf.app.run()
