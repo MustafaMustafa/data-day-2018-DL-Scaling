@@ -47,6 +47,20 @@ def main(argv):
     params = YParams(os.path.abspath(argv[1]), argv[2], print_params=rank0)
     params.experiment_dir = params.experiment_dir + '_' + str(hvd.size()) + '_nodes'
 
+    # create training data input pipeline
+    train_input_fn, train_init_hook = get_input_fn(params.train_data_files,
+                                                   dataset_size=params.train_dataset_size,
+                                                   batchsize=params.batchsize,
+                                                   epochs=params.epochs,
+                                                   variable_scope='train_data_pipeline')
+
+    # # create validation data input pipeline
+    valid_input_fn, valid_init_hook = get_input_fn(params.valid_data_files,
+                                                   dataset_size=params.valid_dataset_size,
+                                                   batchsize=params.batchsize,
+                                                   epochs=params.epochs,
+                                                   variable_scope='valid_data_pipeline')
+
     # build estimator
     # Horovod: save checkpoints only on worker 0 to prevent other workers from corrupting them.
     model_dir = params.experiment_dir if rank0 else None
@@ -59,40 +73,24 @@ def main(argv):
                                        config=config,
                                        params=params)
 
-    # create training data input pipeline
-    train_input_fn, train_init_hook = get_input_fn(params.train_data_files,
-                                                   dataset_size=params.train_dataset_size,
-                                                   batchsize=params.batchsize,
-                                                   epochs=params.epochs,
-                                                   variable_scope='train_data_pipeline',
-                                                   rank=hvd.rank())
-
-    max_steps = (params.train_dataset_size//params.batchsize)*params.epochs
-    # max_steps = max_steps//hvd.size()
-
     # Horovod: BroadcastGlobalVariablesHook broadcasts initial variable states from
     # rank 0 to all other processes. This is necessary to ensure consistent
     # initialization of all workers when training is started with random weights or
     # restored from a checkpoint.
     bcast_hook = hvd.BroadcastGlobalVariablesHook(0)
 
-    train_spec = tf.estimator.TrainSpec(input_fn=train_input_fn,
-                                        hooks=[train_init_hook, bcast_hook],
-                                        max_steps=max_steps)
-
-    # create validation data input pipeline
-    valid_input_fn, valid_init_hook = get_input_fn(params.valid_data_files,
-                                                   dataset_size=params.valid_dataset_size,
-                                                   batchsize=params.batchsize,
-                                                   epochs=params.epochs,
-                                                   variable_scope='valid_data_pipeline',
-                                                   rank=-10)
-
-    eval_spec = tf.estimator.EvalSpec(input_fn=valid_input_fn, hooks=[valid_init_hook])
-
-    # train
     tf.logging.set_verbosity(tf.logging.INFO)
-    tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
+
+    steps_per_epoch = (params.train_dataset_size//params.batchsize)
+    for epoch in range(params.epochs):
+
+        estimator.train(input_fn=train_input_fn,
+                        hooks=[train_init_hook, bcast_hook],
+                        max_steps=(epoch+1)*steps_per_epoch)
+
+        estimator.evaluate(input_fn=valid_input_fn,
+                           steps=params.valid_dataset_size//params.batchsize,
+                           hooks=[valid_init_hook])
 
 if __name__ == '__main__':
     tf.app.run()
